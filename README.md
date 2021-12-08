@@ -10,7 +10,7 @@
 ___
 
 ## 0. Preliminary processing
-Image processing is done by [`img_processing.py`](img_processing.py).
+Image processing is done by [`img_processing.py`](scripts/img_processing.py).
 > **Notes:**
 > - This requires `numpy`, `scipy`, `pillow`, and `pandas`.
 > - The script should be run from the `scripts` folder, and a folder named `output` should exist in the root directory, to prevent an error being thrown when writing the output.
