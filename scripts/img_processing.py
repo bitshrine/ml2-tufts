@@ -18,7 +18,7 @@ def recomp_img(df, img):
 
     for index, tuft in df.iterrows():
         img[tuft['corner_x']:tuft['corner_x']+tuft['dim_x'],
-            tuft['corner_y']:tuft['corner_y']+tuft['dim_y']] = tuft['tuft']
+            tuft['corner_y']:tuft['corner_y']+tuft['dim_y']] = tuft['img'][1:-1, 1:-1]
 
     return img
 
@@ -63,7 +63,7 @@ def pipeline(src, whole, all_tufts):
 
     if (all_tufts):
         for ind, entry in blobs_df.iterrows():
-            tuft_img = Image.fromarray(entry['img'])
+            tuft_img = Image.fromarray(entry['tuft'])
             tuft_img.save('../output/{name}_{i}.tiff'.format(name=out_name, i=ind))
 
 
@@ -93,4 +93,5 @@ if (__name__ == "__main__"):
         else:
             assert False, "unhandled option"
 
+    #pipeline('../data/im0007.tiff', True, True)
     pipeline(src, whole, all_tufts)

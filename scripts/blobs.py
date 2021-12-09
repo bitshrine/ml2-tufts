@@ -75,8 +75,11 @@ def blob_processor(pixel_set, img, base_img):
     """
     xmin, xmax, ymin, ymax = get_blob_extremes(pixel_set)
 
-    dim_x = xmax - xmin + 2*padding
-    dim_y = ymax - ymin + 2*padding
+    dim_x = xmax - xmin# + 2*padding
+    dim_y = ymax - ymin# + 2*padding
+
+    if (dim_x == 0 or dim_y == 0):
+        return False, None
 
     area = dim_x * dim_y
     aspect_ratio = dim_x / dim_y
@@ -87,19 +90,23 @@ def blob_processor(pixel_set, img, base_img):
             aspect_ratio > max_aspect_ratio):
         return False, None
 
-    bb = (xmin - padding, xmax + padding, ymin - padding, ymax + padding)
+
+    blob_img = np.zeros(shape=(dim_x + 2*padding, dim_y + 2*padding))
+    tuft_img = np.ones(shape=(dim_x + 2*padding, dim_y + 2*padding)) * np.min(base_img[xmin:xmax, ymin:ymax])
+    blob_img[padding:-padding, padding:-padding] = img[xmin:xmax, ymin:ymax]
+    tuft_img[padding:-padding, padding:-padding] = base_img[xmin:xmax, ymin:ymax]
 
     blob_entry = {
-        'img': base_img[bb[0]:bb[1], bb[2]:bb[3]],
-        'tuft': img[bb[0]:bb[1], bb[2]:bb[3]],
+        'img': blob_img,
+        'tuft': tuft_img,
         'mean_pos_x': (xmax + xmin)/2,
         'mean_pos_y': (ymax + ymin)/2,
         'dim_x': dim_x,
         'dim_y': dim_y,
         'area': area,
         'aspect_ratio': aspect_ratio,
-        'corner_x': xmin - padding,
-        'corner_y': ymin - padding,
+        'corner_x': xmin,
+        'corner_y': ymin,
     }
 
     return True, blob_entry
@@ -130,5 +137,7 @@ def create_dataframe(img, base_img, blob_processor):
         clean_blob(process_img, pixel_set)
 
     results_df = pd.DataFrame(results)
+
+    #results_df.drop(results_df.loc[results_df['img']])
 
     return results_df
