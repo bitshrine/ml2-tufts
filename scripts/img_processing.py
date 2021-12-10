@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 from scipy import ndimage
 from PIL import Image
@@ -24,6 +26,8 @@ def recomp_img(df, img):
 
 
 def pipeline(src, whole, all_tufts):
+    if (not os.path.exists(src)):
+        print("Source image file does not exist!")
     print("Processing {img}".format(img=src))
 
     img = np.array(Image.open(src)).astype(np.float32)

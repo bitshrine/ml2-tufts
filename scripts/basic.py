@@ -5,9 +5,11 @@ def rescale_image(img):
     Rescale the image's grayscale values to
     the 0-1 range.
     """
-    maxval = np.max(img)
-    minval = np.min(img)
-    return (img - minval)/(maxval - minval)
+    result = img.copy()
+    minval, maxval = np.min(img), np.max(img)
+    if (maxval != minval):
+        result = (result - minval)/(maxval - minval)
+    return result
 
 
 def separate(img, factor):
