@@ -2,6 +2,8 @@ import os
 import numpy as np
 import pandas as pd
 
+from basic import rescale_image
+
 def load_df(name):
     """
     Returns the dataframe resulting from
@@ -62,7 +64,7 @@ def get_lower_brightest_pixel(img, bg_threshold=0.2):
 
 from blobs import coordinates_within_bounds
 
-def pixel_is_similar(img, cur_, next_, sim_delta=0.15):
+def pixel_is_similar(img, cur_, next_, sim_delta=0.025):
     """
     Check that the next pixel is within image
     boundaries and has a value similar enough to
@@ -75,6 +77,8 @@ def pixel_is_similar(img, cur_, next_, sim_delta=0.15):
 from blobs import get_blob_pixels, index_set
 
 def tuft_pipeline(img):
+    img = rescale_image(img)
+
     start_pixel = get_lower_brightest_pixel(img, 0.2)
 
     main_blob = get_blob_pixels(img, start_pixel, pixel_is_similar, set())

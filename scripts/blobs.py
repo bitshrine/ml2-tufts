@@ -78,7 +78,7 @@ min_area = 50
 max_area = 600
 
 
-def blob_processor(pixel_set, img, base_img):
+def blob_processor(pixel_set, base_img, tuft_processor):
     """
     Creates a blob dictionary from a pixel set.
     Returns `(True, blob)` if the blob is valid
@@ -102,14 +102,14 @@ def blob_processor(pixel_set, img, base_img):
         return False, None
 
 
-    blob_img = np.zeros(shape=(dim_x + 2*padding, dim_y + 2*padding))
-    tuft_img = np.ones(shape=(dim_x + 2*padding, dim_y + 2*padding)) * np.min(base_img[xmin:xmax, ymin:ymax])
-    blob_img[padding:-padding, padding:-padding] = img[xmin:xmax, ymin:ymax]
-    tuft_img[padding:-padding, padding:-padding] = base_img[xmin:xmax, ymin:ymax]
+    original_img = np.ones(shape=(dim_x + 2*padding, dim_y + 2*padding)) * np.min(base_img[xmin:xmax, ymin:ymax])
+    original_img[padding:-padding, padding:-padding] = base_img[xmin:xmax, ymin:ymax]
+
+    processed = tuft_processor(original_img)
 
     blob_entry = {
-        'img': blob_img,
-        'tuft': tuft_img,
+        'img': processed,
+        'tuft': original_img,
         'mean_pos_x': (xmax + xmin)/2,
         'mean_pos_y': (ymax + ymin)/2,
         'dim_x': dim_x,
@@ -137,7 +137,7 @@ def index_set(pixel_set):
     return tuple(zip(*list(pixel_set)))
 
 
-def create_dataframe(img, base_img, blob_processor):
+def create_dataframe(img, base_img, blob_processor, tuft_processor):
     """
     Scans a processed image and creates
     a dataframe of blob entries.
@@ -148,8 +148,8 @@ def create_dataframe(img, base_img, blob_processor):
     while (np.any(process_img == 1)):
         coords = np.unravel_index(
             np.argmax(process_img == 1), process_img.shape)
-        pixel_set = get_blob_pixels(process_img, (coords[0], coords[1]), set())
-        is_valid, blob = blob_processor(pixel_set, img, base_img)
+        pixel_set = get_blob_pixels(process_img, (coords[0], coords[1]), pixel_set=set())
+        is_valid, blob = blob_processor(pixel_set, base_img, tuft_processor)
         if (is_valid):
             results.append(blob)
         clean_blob(process_img, pixel_set)

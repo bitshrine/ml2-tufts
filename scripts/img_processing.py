@@ -7,7 +7,8 @@ from PIL import Image
 import sys, getopt
 
 from basic import *
-from blobs import *
+from blobs import blob_processor, create_blobs, create_dataframe
+from tuft_helpers import tuft_pipeline
 
 
 def recomp_img(df, img):
@@ -55,7 +56,7 @@ def pipeline(src, whole, all_tufts):
     img = create_blobs(img, 2, 0.35)
 
     # Create dataframe
-    blobs_df = create_dataframe(img, wing_base, blob_processor)
+    blobs_df = create_dataframe(img, wing_base, blob_processor, tuft_pipeline)
 
     out_name = src.split('.')[-2].split('/')[-1]
     blobs_df.to_json('../output/{name}.json'.format(name=out_name))
@@ -67,7 +68,7 @@ def pipeline(src, whole, all_tufts):
 
     if (all_tufts):
         for ind, entry in blobs_df.iterrows():
-            tuft_img = Image.fromarray(entry['tuft'])
+            tuft_img = Image.fromarray(entry['img'])
             tuft_img.save('../output/{name}_{i}.tiff'.format(name=out_name, i=ind))
 
 
