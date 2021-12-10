@@ -23,12 +23,23 @@ def create_blobs(img, radius, ratio_threshold):
     return result
 
 
-def coordinates_are_valid(img, coords):
+def pixel_validator(img, cur_, next_):
+    """
+    Example function which performs
+    an operation on two pixels from an image
+    and returns a boolean value indicating
+    if the pixel indexed by the `next_` parameter
+    is valid
+    """
+    pass
+
+
+def coordinates_within_bounds(img, cur_, next_):
     """
     Checks whether the given coordinates are inside the
-    image boundaries
+    image boundaries.
     """
-    x, y = coords
+    x, y = next_
     return (x >= 0 and x < len(img) and y >= 0 and y < len(img[0]))
 
 
@@ -37,7 +48,7 @@ coord_comb = [(-1, -1), (-1,  0), (-1,  1),
               (1, -1), (1,  0), (1,  1)]
 
 
-def get_blob_pixels(img, coords, pixel_set=set()):
+def get_blob_pixels(img, coords, pixel_validator=coordinates_within_bounds, pixel_set=set()):
     """Returns a set of pixel coordinates which belong to a blob"""
     x, y = coords
     if (img[x, y] == 0) or ((x, y) in pixel_set):
@@ -45,8 +56,8 @@ def get_blob_pixels(img, coords, pixel_set=set()):
     else:
         pixel_set.add((x, y))
         for i, j in coord_comb:
-            if (coordinates_are_valid(img, (x+i, y+j))):
-                pixel_set.update(get_blob_pixels(img, (x+i, y+j), pixel_set))
+            if (pixel_validator(img, (x, y), (x+i, y+j))):
+                pixel_set.update(get_blob_pixels(img, (x+i, y+j), pixel_validator, pixel_set))
         return pixel_set
 
 
@@ -116,7 +127,14 @@ def clean_blob(img, pixel_set):
     """
     Sets all blob pixels in an image to 0.
     """
-    img[tuple(zip(*list(pixel_set)))] = 0
+    img[index_set(pixel_set)] = 0
+
+def index_set(pixel_set):
+    """
+    Create a Numpy-compatible index
+    from a pixel set
+    """
+    return tuple(zip(*list(pixel_set)))
 
 
 def create_dataframe(img, base_img, blob_processor):
