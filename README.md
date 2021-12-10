@@ -4,7 +4,7 @@
 
 **Team:**
 - Kepler Warrington-Arroyo ([@bitshrine](https://github.com/bitshrine))
-- César Descalzo (add your GitHub name here)
+- César Descalzo ([@Cesar199999](https://github.com/Cesar199999))
 - Zied Mustapha ([@Laniakea1999](https://github.com/Laniakea1999))
 
 ___
