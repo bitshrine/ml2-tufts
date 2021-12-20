@@ -23,7 +23,7 @@ def create_blobs(img, radius, ratio_threshold):
     return result
 
 
-def pixel_validator(img, cur_, next_):
+def always_true_validator(img, cur_, next_):
     """
     Example function which performs
     an operation on two pixels from an image
@@ -31,10 +31,10 @@ def pixel_validator(img, cur_, next_):
     if the pixel indexed by the `next_` parameter
     is valid
     """
-    pass
+    return True
 
 
-def coordinates_within_bounds(img, cur_, next_):
+def coordinates_within_bounds(img, next_):
     """
     Checks whether the given coordinates are inside the
     image boundaries.
@@ -48,7 +48,7 @@ coord_comb = [(-1, -1), (-1,  0), (-1,  1),
               (1, -1), (1,  0), (1,  1)]
 
 
-def get_blob_pixels(img, coords, pixel_validator=coordinates_within_bounds, pixel_set=set()):
+def get_blob_pixels(img, coords, pixel_validator=always_true_validator, pixel_set=set()):
     """Returns a set of pixel coordinates which belong to a blob"""
     x, y = coords
     if (img[x, y] == 0) or ((x, y) in pixel_set):
@@ -56,7 +56,7 @@ def get_blob_pixels(img, coords, pixel_validator=coordinates_within_bounds, pixe
     else:
         pixel_set.add((x, y))
         for i, j in coord_comb:
-            if (pixel_validator(img, (x, y), (x+i, y+j))):
+            if (coordinates_within_bounds(img, (x+i, y+j)) and pixel_validator(img, (x, y), (x+i, y+j))):
                 pixel_set.update(get_blob_pixels(img, (x+i, y+j), pixel_validator, pixel_set))
         return pixel_set
 
