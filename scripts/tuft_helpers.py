@@ -179,7 +179,7 @@ def get_tuft_blob(img):
 
     result[np.where(labels == markers[closest])] = 1
 
-    frame = (35, 15)
+    frame = (50, 20)
 
     crop = np.zeros(shape=frame)
     crop[-img.shape[0]:frame[0], -img.shape[1]:frame[1]] = result
@@ -189,8 +189,11 @@ def get_tuft_blob(img):
 
 
 def tuft_processor(img):
-    result_img = img.copy()
+    pass
+    #result_img = img.copy()
 
     #result_img = separate(result_img, 10)
 
-    return get_tuft_blob(result_img)
+    #return get_tuft_blob(result_img)
+
+    

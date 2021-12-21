@@ -7,7 +7,7 @@ from PIL import Image
 import sys, getopt
 
 from basic import *
-from blobs import blob_processor, create_blobs, create_dataframe
+from blobs import blob_processor, create_blobs, create_dataframe, frame
 from tuft_helpers import tuft_processor
 
 
@@ -27,6 +27,18 @@ def recomp_img(df, img):
     return img
 
 
+
+def pad_img(img, frame):
+    pad_x = img.shape[0] + frame[0] * 2
+    pad_y = img.shape[1] + frame[1] * 2
+    padding = np.zeros(shape=(pad_x, pad_y))
+    padding[frame[0]:-frame[0], frame[1]:-frame[1]] = img
+
+    return padding
+
+
+
+
 def pipeline(src, whole, all_tufts):
     if (not os.path.exists(src)):
         print("Source image file does not exist!")
@@ -40,7 +52,7 @@ def pipeline(src, whole, all_tufts):
     # Rescale
     img = rescale_image(img)
 
-    wing_base = img.copy()
+    wing_base = pad_img(img, frame)
 
     # Apply tophat transformation
     img = 1 - img
@@ -56,8 +68,11 @@ def pipeline(src, whole, all_tufts):
     # Extract blobs
     img = create_blobs(img, 2, 0.35)
 
+    # Add padding for dataframe creation
+    img = pad_img(img, frame)
+
     # Create dataframe
-    blobs_df = create_dataframe(img, wing_base, blob_processor, tuft_processor)
+    blobs_df = create_dataframe(img, wing_base, blob_processor)#, tuft_processor)
 
     out_name = src.split('.')[-2].split('/')[-1]
     blobs_df.to_json('../output/{name}.json'.format(name=out_name))
