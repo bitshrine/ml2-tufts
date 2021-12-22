@@ -31,3 +31,8 @@ The script produces a .json file which can be loaded into a Pandas DataFram (usi
 | img | tuft | mean_pos_x | mean_pos_y | dim_x | dim_y | area | aspect_ratio | corner_x | corner_y |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Image of the tuft | Processed image of the tuft | Center along the x axis | Center along the y axis | Width of the image | Length of the image | Area of the image in pixels | Aspect ratio of the image | x-coordinate of the upper left-hand corner of the image | y-coordinate of the upper right-hand corner of the image |
+
+## 1. Competitive Artificial Neural Network with Winner Takes All rule
+To execute this model on some data, use the jupyter notebook CANN.py, modify the 3rd cell code to add any data and run everything.
+The predicition should appear in a new column "Degree".
+In the 11th code cell, you can change the number of cluster (its initially at 20)
