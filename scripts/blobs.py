@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 
+from basic import rescale_image
+
 
 def create_blobs(img, radius, ratio_threshold):
     """
@@ -127,7 +129,7 @@ def blob_processor(pixel_set, base_img):#, tuft_processor):
 
     blob_entry = {
         #'img': processed,
-        'img': original_img, #'tuft': original_img
+        'img': rescale_image(original_img), #'tuft': original_img
         'mean_pos_x': mean_pos_x, #(xmax + xmin)/2,
         'mean_pos_y': mean_pos_y, #(ymax + ymin)/2,
         'dim_x': dim_x,

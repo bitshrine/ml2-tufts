@@ -18,13 +18,30 @@ def recomp_img(df, img):
     and how the pipeline has processed them.
     """
     img = img.copy()
+    img = np.squeeze(np.stack((img,) * 3, -1))
 
     for index, tuft in df.iterrows():
         tuft_img = np.array(tuft['img'])
-        img[tuft['corner_x']:tuft['corner_x']+tuft_img.shape[0], 
-            tuft['corner_y']:tuft['corner_y']+tuft_img.shape[1]] = tuft['img']#[1:-1, 1:-1]
 
-    return img
+        corner_x = tuft['corner_x'] - int(np.floor((tuft_img.shape[0] - tuft['dim_x']) / 2))
+        corner_y = tuft['corner_y'] - int(np.floor((tuft_img.shape[1] - tuft['dim_y']) / 2))
+
+        # Draw rescaled image
+        img[corner_x:corner_x + tuft_img.shape[0], 
+            corner_y:corner_y + tuft_img.shape[1], :] = np.squeeze(np.stack((tuft['img'],) * 3, -1))  # [1:-1, 1:-1]
+
+        # Draw rectangle
+        img[corner_x:corner_x + tuft_img.shape[0], corner_y, :] = np.array([0, 1, 0])
+        img[corner_x:corner_x + tuft_img.shape[0],
+            corner_y + tuft_img.shape[1], :] = np.array([0, 1, 0])
+
+        img[corner_x,
+            corner_y:corner_y + tuft_img.shape[1]:] = np.array([0, 1, 0])
+        
+        img[corner_x + tuft_img.shape[0],
+            corner_y:corner_y + tuft_img.shape[1], :] = np.array([0, 1, 0])
+
+    return Image.fromarray(np.uint8(img * 255)).convert('RGB')
 
 
 
@@ -79,7 +96,6 @@ def pipeline(src, whole, all_tufts):
 
     if (whole):
         whole_img = recomp_img(blobs_df, wing_base)
-        whole_img = Image.fromarray(whole_img)
         whole_img.save('../output/{name}_whole.tiff'.format(name=out_name))
 
     if (all_tufts):
