@@ -79,7 +79,7 @@ max_aspect_ratio = 6
 min_area = 50
 max_area = 600
 
-frame = (35, 20)
+frame = (25, 12)
 
 def blob_processor(pixel_set, base_img):#, tuft_processor):
     """
